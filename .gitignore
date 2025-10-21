@@ -1,0 +1,15 @@
+# 編譯產物
+*.exe
+*.obj
+*.out
+*.log
+
+# MATLAB 暫存檔
+*.asv
+*.m~
+*.mat
+*.fig
+
+# 編譯與系統資料夾
+.vscode/
+build/

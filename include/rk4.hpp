@@ -52,17 +52,6 @@ public:
 
         // 更新時間
         t += dt;
-
-    }
-
-    // 取得當前狀態向量
-    double* get_state() {
-        return x;
-    }
-
-    // 取得當前時間
-    double get_time() {
-        return t;
     }
 
     // 模擬到 t_end
@@ -86,6 +75,78 @@ public:
             }
             solve(deriv_func, x); 
         }
+    }
+
+    // 解算函式，傳入微分方程的函式指標 跟上面的比較簡化版 沒有保證n參數
+    void solve(void (*deriv_func)(double, double*, double*), double* initial_state) {
+        // 初始化狀態向量
+        for (int i = 0; i < size_of_state; ++i) {
+            x[i] = initial_state[i];
+        }
+
+        // 計算 k1
+        deriv_func(t, x, k1);
+
+        // 計算 k2
+        
+        for (int i = 0; i < size_of_state; ++i) {
+            x_temp[i] = x[i] + 0.5 * dt * k1[i];
+        }
+        deriv_func( t + 0.5 * dt, x_temp, k2);
+
+        // 計算 k3
+        for (int i = 0; i < size_of_state; ++i) {
+            x_temp[i] = x[i] + 0.5 * dt * k2[i];
+        }
+        deriv_func( t + 0.5 * dt, x_temp, k3);
+
+        // 計算 k4
+        for (int i = 0; i < size_of_state; ++i) {
+            x_temp[i] = x[i] + dt * k3[i];
+        }
+        deriv_func( t + dt, x_temp, k4);
+
+        // 更新狀態向量
+        for (int i = 0; i < size_of_state; ++i) {
+            x[i] += (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
+        }
+
+        // 更新時間
+        t += dt;
+
+    }
+
+    // 模擬到 t_end 跟上面比較簡化版 沒有保證n參數
+    void simulate(double t_end, void (*deriv_func)(double, double*, double*), double* initial_state) {
+        // 初始化狀態向量
+        for (int i = 0; i < size_of_state; ++i) {
+            x[i] = initial_state[i];
+        }
+
+        t = 0.0;
+        int idx_max = (int)round(t_end / dt)+1;
+        data_length = idx_max;
+        data_x = new double[idx_max * size_of_state];
+        data_t = new double[idx_max];
+        for (int i = 0; i < idx_max; i++)
+        {   
+            data_t[i] = t;
+            for (int j = 0; j < size_of_state; j++)
+            {
+                data_x[i * size_of_state + j] = x[j];
+            }
+            solve(deriv_func, x); 
+        }
+    }
+
+    // 取得當前狀態向量
+    double* get_state() {
+        return x;
+    }
+
+    // 取得當前時間
+    double get_time() {
+        return t;
     }
 
     // 釋放資源
@@ -117,6 +178,24 @@ private:
 
 // deriv_func 範例
 void example_deriv_func(int n, double t, double* x, double* dx) {
+    // 假設一個簡單的微分方程 dx/dt = -x
+    // for (int i = 0; i < n; ++i) {
+    //     dx[i] = -x[i];
+    // }
+    double T = 1.5;
+    double M=3;
+    double C=2;
+    double K=1;
+
+    //step input of first order system
+    dx[0] = -1/T*x[0] + 1/T;
+
+    // MCK system
+    dx[1] = x[2];
+    dx[2] = -C/M*x[2] - K/M*x[1] ;
+}
+
+void example_deriv_func_simple(double t, double* x, double* dx) {
     // 假設一個簡單的微分方程 dx/dt = -x
     // for (int i = 0; i < n; ++i) {
     //     dx[i] = -x[i];

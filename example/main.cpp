@@ -11,7 +11,8 @@ int main() {
 
     // 建立求解器並模擬
     RK4 solver(n, dt);
-    solver.simulate(t_end, example_deriv_func, x0);
+    // solver.simulate(t_end, example_deriv_func, x0);
+    solver.simulate(t_end, example_deriv_func_simple, x0);
 
     // 輸出到檔案（CSV: t,x1,x2,...,xn）
     std::FILE* fp = std::fopen("traj.txt", "w");

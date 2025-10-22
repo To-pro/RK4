@@ -83,6 +83,9 @@ void deriv_func(int n, double t, double* x, double* dx);
 * x:狀態向量 
 * dx:狀態微分
 
+也可以不用給 n 狀態維度。但就要自己注意維度是否跟初始化時 `solver` 設定的一樣了!
+
+
 使用 `simulate()` 自動積分到指定時間：
 ```
 solver.simulate(t_end, deriv_func, x0);

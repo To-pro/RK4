@@ -53,12 +53,19 @@ $$
 ## 資料夾結構
 
 RK4/
+
 ├── include/
+
 │ └── rk4.hpp # RK4 類別定義與實作
+
 ├── example/
+
 │ ├── main.cpp # 範例主程式
+
 │ ├── traj.txt # C++ 模擬輸出結果 (執行後自動生成)
+
 │ └── C_Numerical_simulation.m # MATLAB 比對腳本
+
 └── README.md # 本教學文件
 
 ## 函示庫使用重點
